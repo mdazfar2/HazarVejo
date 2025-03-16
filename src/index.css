@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.preview-content {
+  min-height: 600px;
+  height: 100%;
+}
+
+/* CodeMirror Customizations */
+.cm-editor {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+}
+
+.cm-editor .cm-content {
+  white-space: pre-wrap;
+}
+
+.cm-editor .cm-line {
+  padding: 0 4px;
+}
+
+/* Preview iframe styles */
+iframe {
+  background: white;
+}
