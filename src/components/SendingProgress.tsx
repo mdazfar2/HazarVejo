@@ -35,7 +35,7 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
     setStats({ success: 0, failure: 0, total: csvData.length });
 
     try {
-      const response = await fetch('/api/send-emails', {
+      const response = await fetch('http://localhost:3000/api/send-emails', { // Updated URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

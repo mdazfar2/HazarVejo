@@ -1,8 +1,22 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
+import cors from 'cors'; // Import cors
 
 const app = express();
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  methods: ['GET', 'POST', 'OPTIONS'], // Allow these methods
+  allowedHeaders: ['Content-Type'], // Allow these headers
+})); // Enable CORS
+
+// Add a root route to handle "Cannot GET /" error
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+// Handle preflight requests
+app.options('/api/send-emails', cors());
 
 app.post('/api/send-emails', async (req, res) => {
   const { smtpSettings, emailContent, recipients, batchSize = 100, delayBetweenBatches = 300 } = req.body;
