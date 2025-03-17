@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { useAnalytics } from '../context/AnalyticsContext';
 
 interface SendingProgressProps {
   csvData: any[];
@@ -26,6 +27,7 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
     total: 0,
   });
   const [completed, setCompleted] = useState(false);
+  const { updateAnalytics, resetAnalytics } = useAnalytics();
 
   const startSending = async () => {
     setSending(true);
@@ -33,9 +35,10 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
     setCompleted(false);
     setProgress(0);
     setStats({ success: 0, failure: 0, total: csvData.length });
+    resetAnalytics();
 
     try {
-      const response = await fetch('http://localhost:3000/api/send-emails', { // Updated URL
+      const response = await fetch('http://localhost:3000/api/send-emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,6 +70,25 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
               success: update.data.success,
               failure: update.data.failure,
               total: update.data.total,
+            });
+
+            // Update analytics data
+            updateAnalytics({
+              totalSent: update.data.total,
+              delivered: update.data.success,
+              bounced: update.data.failure,
+              recipients: update.data.recipients || [],
+              timeSeriesData: update.data.timeSeriesData || {
+                labels: [],
+                opens: [],
+                clicks: [],
+              },
+              deviceBreakdown: update.data.deviceBreakdown || {
+                desktop: 0,
+                mobile: 0,
+                tablet: 0,
+              },
+              locationData: update.data.locationData || {},
             });
           } else if (update.type === 'complete') {
             setCompleted(true);
