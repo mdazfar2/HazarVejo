@@ -1,14 +1,14 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
-import cors from 'cors'; // Import cors
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173', // Allow requests from this origin
-  methods: ['GET', 'POST', 'OPTIONS'], // Allow these methods
-  allowedHeaders: ['Content-Type'], // Allow these headers
-})); // Enable CORS
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 // Add a root route to handle "Cannot GET /" error
 app.get('/', (req, res) => {
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 app.options('/api/send-emails', cors());
 
 app.post('/api/send-emails', async (req, res) => {
-  const { smtpSettings, emailContent, recipients, batchSize = 100, delayBetweenBatches = 300 } = req.body;
+  const { smtpSettings, emailContent, emailSubject, recipients, batchSize = 100, delayBetweenBatches = 300 } = req.body;
 
   // Create transporter
   const transporter = nodemailer.createTransport({
@@ -42,15 +42,19 @@ app.post('/api/send-emails', async (req, res) => {
     
     for (const recipient of batch) {
       try {
-        // Replace placeholders in email content
+        // Replace placeholders in email content and subject
         const personalizedContent = emailContent.replace(/\{(\w+)\}/g, (match, field) => 
+          recipient[field] || match
+        );
+        
+        const personalizedSubject = emailSubject.replace(/\{(\w+)\}/g, (match, field) => 
           recipient[field] || match
         );
 
         await transporter.sendMail({
           from: smtpSettings.username,
           to: recipient.email,
-          subject: "Your Email Campaign",
+          subject: personalizedSubject,
           html: personalizedContent,
         });
 

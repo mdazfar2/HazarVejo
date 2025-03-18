@@ -22,6 +22,7 @@ const CampaignCreator = () => {
   const [currentStep, setCurrentStep] = useState<Step>('csv');
   const [csvData, setCSVData] = useState<any[]>([]);
   const [emailContent, setEmailContent] = useState('');
+  const [emailSubject, setEmailSubject] = useState('');
   const [smtpSettings, setSMTPSettings] = useState({
     host: '',
     port: '',
@@ -29,18 +30,30 @@ const CampaignCreator = () => {
     password: '',
   });
 
+  const handleEmailChange = (content: string, subject: string) => {
+    setEmailContent(content);
+    setEmailSubject(subject);
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 'csv':
         return <CSVUploader onDataLoaded={setCSVData} />;
       case 'editor':
-        return <EmailEditor content={emailContent} onChange={setEmailContent} csvData={csvData} />;
+        return <EmailEditor content={emailContent} onChange={handleEmailChange} csvData={csvData} />;
       case 'preview':
         return <EmailPreview content={emailContent} csvData={csvData} />;
       case 'settings':
         return <SMTPSettings settings={smtpSettings} onChange={setSMTPSettings} />;
       case 'send':
-        return <SendingProgress csvData={csvData} emailContent={emailContent} smtpSettings={smtpSettings} />;
+        return (
+          <SendingProgress 
+            csvData={csvData} 
+            emailContent={emailContent} 
+            emailSubject={emailSubject}
+            smtpSettings={smtpSettings} 
+          />
+        );
       case 'analytics':
         return <Analytics />;
       default:

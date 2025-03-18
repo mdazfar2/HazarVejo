@@ -5,6 +5,7 @@ import { useAnalytics } from '../context/AnalyticsContext';
 interface SendingProgressProps {
   csvData: any[];
   emailContent: string;
+  emailSubject: string;
   smtpSettings: {
     host: string;
     port: string;
@@ -16,6 +17,7 @@ interface SendingProgressProps {
 const SendingProgress: React.FC<SendingProgressProps> = ({
   csvData,
   emailContent,
+  emailSubject,
   smtpSettings,
 }) => {
   const [sending, setSending] = useState(false);
@@ -46,6 +48,7 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
         body: JSON.stringify({
           smtpSettings,
           emailContent,
+          emailSubject,
           recipients: csvData,
           batchSize: 100,
           delayBetweenBatches: 300,
@@ -118,6 +121,7 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
               <div className="mt-2 text-sm text-gray-500">
                 <p>Total Recipients: {csvData.length}</p>
                 <p>SMTP Server: {smtpSettings.host}</p>
+                <p>Subject: {emailSubject || '(No subject)'}</p>
               </div>
             </div>
 
@@ -176,9 +180,9 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
 
             <button
               onClick={startSending}
-              disabled={sending}
+              disabled={sending || !emailSubject}
               className={`w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${
-                sending
+                sending || !emailSubject
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
               }`}
@@ -191,7 +195,7 @@ const SendingProgress: React.FC<SendingProgressProps> = ({
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Start Sending
+                  {!emailSubject ? 'Please add a subject line' : 'Start Sending'}
                 </>
               )}
             </button>
