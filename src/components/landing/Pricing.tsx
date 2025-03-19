@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import PaymentModal from '../payment/PaymentModal';
 
 const pricingPlans = [
   {
@@ -70,6 +71,14 @@ const pricingPlans = [
 ];
 
 const Pricing = () => {
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePlanSelect = (plan: any) => {
+    setSelectedPlan(plan);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -123,6 +132,7 @@ const Pricing = () => {
                       plan.cta.map((button, i) => (
                         <button
                           key={i}
+                          onClick={() => handlePlanSelect(plan)}
                           className={`w-full px-4 py-2 rounded-md text-sm font-medium ${
                             plan.buttonStyle[i] === 'primary'
                               ? 'bg-indigo-600 text-white hover:bg-indigo-700'
@@ -134,6 +144,7 @@ const Pricing = () => {
                       ))
                     ) : (
                       <button
+                        onClick={() => handlePlanSelect(plan)}
                         className={`w-full px-4 py-2 rounded-md text-sm font-medium ${
                           plan.buttonStyle === 'primary'
                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'
@@ -156,6 +167,13 @@ const Pricing = () => {
           </p>
         </div>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        plan={selectedPlan}
+      />
     </div>
   );
 };
