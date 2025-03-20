@@ -3,24 +3,24 @@ import React from 'react';
 const testimonials = [
   {
     content: "HazarVejo has transformed our email marketing strategy. The real-time analytics and easy-to-use interface have made our campaigns more effective than ever.",
-    author: "Sarah Johnson",
+    author: "Nitish Kumar",
     role: "Marketing Director",
     company: "TechCorp",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80",
+    image: "https://i.pinimg.com/originals/07/33/ba/0733ba760b29378474dea0fdbcb97107.png",
   },
   {
     content: "The batch sending feature and customizable templates have saved us countless hours. Our email campaigns are now more personalized and engaging.",
-    author: "Michael Chen",
+    author: "Manikant Singh",
     role: "Growth Manager",
     company: "StartupX",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80",
+    image: "https://media.licdn.com/dms/image/v2/D5603AQGsJkLXOXLK7A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1705076777573?e=1747872000&v=beta&t=4gdOrk25tAALmHuXe77psvJ8DP3cIhAdh7hN6haRWhU",
   },
   {
     content: "Outstanding support and powerful features. HazarVejo has helped us achieve a 40% increase in our email open rates.",
-    author: "Emily Rodriguez",
+    author: "Anuj Gaurave",
     role: "Email Specialist",
     company: "Global Solutions",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&h=128&q=80",
+    image: "https://media.licdn.com/dms/image/v2/D5603AQF26gs73A5ZEw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1731777802395?e=1747872000&v=beta&t=VaNK-F1hOnb4gBQ-xtkKoPrcvuMoVBqhcavBfIhr9tg",
   },
 ];
 

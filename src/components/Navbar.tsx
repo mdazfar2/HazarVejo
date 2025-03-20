@@ -14,12 +14,18 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <Link
+              to="/auth/login"
+              className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
               Login
-            </button>
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+            </Link>
+            <Link
+              to="/auth/signup"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            >
               Sign Up
-            </button>
+            </Link>
           </div>
         </div>
       </div>
