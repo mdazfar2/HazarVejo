@@ -5,6 +5,12 @@ import {
   TrendingUp,
   Download,
   Search,
+  Filter,
+  Monitor,
+  Smartphone,
+  Tablet,
+  MapPin,
+  Calendar,
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -20,7 +26,6 @@ import {
 } from 'chart.js';
 import { Line, Bar, Pie } from 'react-chartjs-2';
 import { jsPDF } from 'jspdf';
-import { useAnalytics } from '../context/AnalyticsContext';
 
 // Register ChartJS components
 ChartJS.register(
@@ -38,25 +43,34 @@ ChartJS.register(
 const Analytics = () => {
   const [dateRange, setDateRange] = useState('7days');
   const [searchTerm, setSearchTerm] = useState('');
-  const { analyticsData } = useAnalytics();
+
+  // Sample data - In a real app, this would come from your backend
+  const campaignData = {
+    totalSent: 1000,
+    delivered: 980,
+    opened: 450,
+    clicked: 200,
+    bounced: 20,
+    spamComplaints: 2,
+  };
 
   const calculateRate = (value: number, total: number) => {
-    return total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+    return ((value / total) * 100).toFixed(1);
   };
 
   // Time series data for email activity
   const timeSeriesData = {
-    labels: analyticsData.timeSeriesData.labels,
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
       {
         label: 'Opens',
-        data: analyticsData.timeSeriesData.opens,
+        data: [65, 75, 70, 80, 75, 68, 72],
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
       },
       {
         label: 'Clicks',
-        data: analyticsData.timeSeriesData.clicks,
+        data: [28, 35, 32, 38, 30, 25, 32],
         borderColor: 'rgb(153, 102, 255)',
         tension: 0.1,
       },
@@ -68,11 +82,7 @@ const Analytics = () => {
     labels: ['Desktop', 'Mobile', 'Tablet'],
     datasets: [
       {
-        data: [
-          analyticsData.deviceBreakdown.desktop,
-          analyticsData.deviceBreakdown.mobile,
-          analyticsData.deviceBreakdown.tablet,
-        ],
+        data: [45, 40, 15],
         backgroundColor: [
           'rgb(54, 162, 235)',
           'rgb(255, 99, 132)',
@@ -87,12 +97,7 @@ const Analytics = () => {
     labels: ['Delivered', 'Opened', 'Clicked', 'Bounced'],
     datasets: [
       {
-        data: [
-          analyticsData.delivered,
-          analyticsData.opened,
-          analyticsData.clicked,
-          analyticsData.bounced,
-        ],
+        data: [980, 450, 200, 20],
         backgroundColor: [
           'rgb(75, 192, 192)',
           'rgb(54, 162, 235)',
@@ -102,6 +107,20 @@ const Analytics = () => {
       },
     ],
   };
+
+  // Sample recipient data
+  const recipients = [
+    {
+      email: 'user1@example.com',
+      opened: true,
+      clicked: true,
+      bounced: false,
+      device: 'Desktop',
+      location: 'New York',
+      openTime: '2024-03-15 10:30:00',
+    },
+    // Add more recipients as needed
+  ];
 
   const downloadPDFReport = () => {
     const doc = new jsPDF();
@@ -114,10 +133,10 @@ const Analytics = () => {
     doc.setFontSize(14);
     doc.text('Campaign Overview', 20, 40);
     doc.setFontSize(12);
-    doc.text(`Total Sent: ${analyticsData.totalSent}`, 20, 50);
-    doc.text(`Delivered: ${analyticsData.delivered}`, 20, 60);
-    doc.text(`Opened: ${analyticsData.opened}`, 20, 70);
-    doc.text(`Clicked: ${analyticsData.clicked}`, 20, 80);
+    doc.text(`Total Sent: ${campaignData.totalSent}`, 20, 50);
+    doc.text(`Delivered: ${campaignData.delivered}`, 20, 60);
+    doc.text(`Opened: ${campaignData.opened}`, 20, 70);
+    doc.text(`Clicked: ${campaignData.clicked}`, 20, 80);
     
     // Save the PDF
     doc.save('campaign-report.pdf');
@@ -126,7 +145,7 @@ const Analytics = () => {
   const downloadCSV = () => {
     const csvContent = "data:text/csv;charset=utf-8," + 
       "Email,Opened,Clicked,Bounced,Device,Location,Open Time\n" +
-      analyticsData.recipients.map(r => 
+      recipients.map(r => 
         `${r.email},${r.opened},${r.clicked},${r.bounced},${r.device},${r.location},${r.openTime}`
       ).join("\n");
     
@@ -138,10 +157,6 @@ const Analytics = () => {
     link.click();
     document.body.removeChild(link);
   };
-
-  const filteredRecipients = analyticsData.recipients.filter(recipient =>
-    recipient.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="space-y-6">
@@ -182,7 +197,7 @@ const Analytics = () => {
                         Open Rate
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {calculateRate(analyticsData.opened, analyticsData.delivered)}%
+                        {calculateRate(campaignData.opened, campaignData.delivered)}%
                       </dd>
                     </dl>
                   </div>
@@ -201,7 +216,7 @@ const Analytics = () => {
                         Click Rate
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {calculateRate(analyticsData.clicked, analyticsData.delivered)}%
+                        {calculateRate(campaignData.clicked, campaignData.delivered)}%
                       </dd>
                     </dl>
                   </div>
@@ -220,7 +235,7 @@ const Analytics = () => {
                         Bounce Rate
                       </dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        {calculateRate(analyticsData.bounced, analyticsData.totalSent)}%
+                        {calculateRate(campaignData.bounced, campaignData.totalSent)}%
                       </dd>
                     </dl>
                   </div>
@@ -256,11 +271,11 @@ const Analytics = () => {
           <h4 className="text-lg font-medium text-gray-900 mb-4">Geographic Distribution</h4>
           <Bar
             data={{
-              labels: Object.keys(analyticsData.locationData),
+              labels: ['New York', 'London', 'Tokyo', 'Paris', 'Sydney'],
               datasets: [
                 {
                   label: 'Opens by Location',
-                  data: Object.values(analyticsData.locationData),
+                  data: [65, 59, 80, 81, 56],
                   backgroundColor: 'rgba(75, 192, 192, 0.2)',
                   borderColor: 'rgb(75, 192, 192)',
                   borderWidth: 1,
@@ -322,7 +337,7 @@ const Analytics = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRecipients.map((recipient, index) => (
+              {recipients.map((recipient, index) => (
                 <tr key={index}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {recipient.email}
